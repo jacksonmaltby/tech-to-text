@@ -7,8 +7,8 @@ router.get('/', (req, res) => {
   Post.findAll({
     attributes: [
       'id',
-      'content',
-      'title',
+      'post_content',
+      'post_title',
       'created_at'
     ],
     order: [
@@ -73,20 +73,23 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', withAuth, (req, res) => {
+router.post('/', (req, res) => {
+  const body = req.body;
   Post.create({
-    title: req.body.title,
-    content: req.body.content,
+    ...body,
     user_id: req.session.user_id
   })
-    .then(dbPostData => res.json(dbPostData))
+    .then(dbPostData => {
+      console.log(dbPostData);
+      return res.json(dbPostData)
+    })
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
 });
 
-router.put('/:id', withAuth, (req, res) => {
+router.put('/:id', (req, res) => {
   Post.update({
     title: req.body.title,
     content: req.body.post_content
